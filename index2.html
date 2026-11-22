@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AgriServe — Smart Farming Platform</title>
+<link rel="stylesheet" href="style.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+/* ===== HOMEPAGE STYLES ===== */
+body { padding-top: var(--nav-h); }
+
+/* Hero */
+.hero {
+  min-height: calc(100vh - var(--nav-h));
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 60px;
+  padding: 80px 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.hero-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, var(--green-100), #fff);
+  border: 1px solid var(--green-200);
+  color: var(--green-700);
+  padding: 6px 16px; border-radius: 100px;
+  font-size: 0.82rem; font-weight: 700;
+  letter-spacing: 0.05em; margin-bottom: 24px;
+}
+[data-theme="dark"] .hero-tag { background: var(--green-800); border-color: var(--green-600); }
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 4vw, 3.8rem);
+  font-weight: 700;
+  line-height: 1.18;
+  color: var(--gray-900);
+  margin-bottom: 20px;
+}
+.hero-title span { color: var(--green-500); display: block; }
+.hero-desc {
+  font-size: 1.05rem; color: var(--gray-600);
+  max-width: 500px; margin-bottom: 36px; line-height: 1.75;
+}
+.hero-actions { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 48px; }
+.hero-stats { display: flex; gap: 32px; }
+.hero-stat { border-left: 3px solid var(--green-300); padding-left: 16px; }
+.hero-stat .n {
+  font-family: var(--font-display); font-size: 1.8rem; font-weight: 700; color: var(--green-600);
+}
+.hero-stat .l { font-size: 0.8rem; color: var(--gray-500); font-weight: 500; }
+
+/* Hero Visual */
+.hero-visual { position: relative; }
+.hero-img-wrap {
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  aspect-ratio: 4/3;
+  box-shadow: var(--shadow-xl);
+}
+.hero-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+.hero-card {
+  position: absolute;
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--gray-200);
+  min-width: 180px;
+}
+.hero-card.card-tl { top: 20px; left: -30px; }
+.hero-card.card-br { bottom: 20px; right: -20px; }
+.hero-card .card-icon { font-size: 1.4rem; margin-bottom: 6px; }
+.hero-card .card-val {
+  font-family: var(--font-display); font-size: 1.4rem; font-weight: 700; color: var(--gray-900);
+}
+.hero-card .card-lbl { font-size: 0.76rem; color: var(--gray-500); font-weight: 500; }
+
+/* How it works */
+.hiw-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px;
+}
+.hiw-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 32px 24px;
+  text-align: center;
+  position: relative;
+  transition: var(--transition);
+}
+.hiw-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-md); border-color: var(--green-300); }
+.hiw-num {
+  font-family: var(--font-mono);
+  font-size: 0.75rem; font-weight: 700;
+  color: var(--green-400); letter-spacing: 0.1em;
+  margin-bottom: 16px;
+}
+.hiw-icon {
+  width: 56px; height: 56px;
+  background: linear-gradient(135deg, var(--green-100), var(--green-200));
+  border-radius: var(--radius-md);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.6rem; margin: 0 auto 18px;
+}
+[data-theme="dark"] .hiw-icon { background: var(--green-700); }
+.hiw-card h3 { font-size: 1rem; font-weight: 700; color: var(--gray-900); margin-bottom: 10px; }
+.hiw-card p { font-size: 0.87rem; color: var(--gray-600); line-height: 1.65; }
+.hiw-connector {
+  position: absolute; top: 50%; right: -16px;
+  width: 32px; height: 2px;
+  background: var(--green-300); z-index: 1;
+}
+
+/* Features */
+.features-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+}
+.feature-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 28px;
+  transition: var(--transition);
+  cursor: pointer;
+}
+.feature-card:hover { border-color: var(--green-400); box-shadow: var(--shadow-md); transform: translateY(-4px); }
+.feature-icon {
+  width: 48px; height: 48px;
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; margin-bottom: 18px;
+}
+.feature-icon.green  { background: var(--green-100); }
+.feature-icon.gold   { background: #fef3c7; }
+.feature-icon.blue   { background: #dbeafe; }
+.feature-icon.purple { background: #ede9fe; }
+.feature-icon.red    { background: #fee2e2; }
+.feature-icon.teal   { background: #ccfbf1; }
+[data-theme="dark"] .feature-icon.green  { background: var(--green-800); }
+[data-theme="dark"] .feature-icon.gold   { background: #451a03; }
+[data-theme="dark"] .feature-icon.blue   { background: #1e3a5f; }
+.feature-card h3 { font-size: 1rem; font-weight: 700; color: var(--gray-900); margin-bottom: 10px; }
+.feature-card p  { font-size: 0.87rem; color: var(--gray-600); line-height: 1.65; }
+.feature-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 16px; font-size: 0.84rem; font-weight: 700;
+  color: var(--green-600);
+}
+.feature-link:hover { gap: 10px; }
+
+/* Crop Cards */
+.crops-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
+}
+.crop-card {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  aspect-ratio: 3/4;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+.crop-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+.crop-card img { width: 100%; height: 100%; object-fit: cover; }
+.crop-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(10,31,14,0.9) 0%, transparent 55%);
+  padding: 20px;
+  display: flex; flex-direction: column; justify-content: flex-end;
+}
+.crop-name { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: #fff; }
+.crop-yield { font-size: 0.78rem; color: var(--green-300); margin-top: 4px; }
+.crop-profit { font-size: 0.88rem; font-weight: 700; color: var(--gold-light); margin-top: 8px; }
+.crop-btn {
+  margin-top: 12px;
+  padding: 8px 0;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: var(--radius-sm);
+  color: #fff; font-size: 0.8rem; font-weight: 600;
+  text-align: center; opacity: 0;
+  transition: var(--transition);
+}
+.crop-card:hover .crop-btn { opacity: 1; }
+
+/* Testimonials */
+.testimonials-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+}
+.testimonial-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 28px;
+}
+.testimonial-stars { color: var(--gold); margin-bottom: 14px; font-size: 1rem; }
+.testimonial-text {
+  font-size: 0.9rem; color: var(--gray-700); line-height: 1.7;
+  font-style: italic; margin-bottom: 20px;
+}
+.testimonial-author { display: flex; align-items: center; gap: 12px; }
+.author-avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%; object-fit: cover;
+  border: 2px solid var(--green-200);
+}
+.author-name { font-size: 0.9rem; font-weight: 700; color: var(--gray-900); }
+.author-farm { font-size: 0.78rem; color: var(--gray-500); }
+
+/* CTA */
+.cta-section {
+  background: linear-gradient(135deg, var(--green-800) 0%, var(--green-600) 60%, var(--green-500) 100%);
+  border-radius: var(--radius-xl);
+  padding: 80px 60px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  margin: 0 24px 80px;
+}
+.cta-section::before {
+  content: '';
+  position: absolute; top: -60px; right: -60px;
+  width: 300px; height: 300px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 50%;
+}
+.cta-section h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  color: #fff; font-weight: 700;
+  margin-bottom: 16px;
+}
+.cta-section p { color: rgba(255,255,255,0.8); font-size: 1rem; margin-bottom: 36px; }
+.cta-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+.btn-white {
+  background: #fff; color: var(--green-700);
+  padding: 14px 32px;
+  border-radius: var(--radius-sm);
+  font-weight: 700; font-size: 0.95rem;
+  display: inline-flex; align-items: center; gap: 8px;
+  transition: var(--transition);
+}
+.btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+.btn-outline-white {
+  background: transparent; border: 2px solid rgba(255,255,255,0.6);
+  color: #fff; padding: 14px 32px;
+  border-radius: var(--radius-sm);
+  font-weight: 700; font-size: 0.95rem;
+  display: inline-flex; align-items: center; gap: 8px;
+  transition: var(--transition);
+}
+.btn-outline-white:hover { background: rgba(255,255,255,0.15); border-color: #fff; }
+
+/* Login Modal */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 5000;
+  background: rgba(0,0,0,0.55); backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+  width: min(480px, 92vw);
+  transform: translateY(20px); transition: transform 0.3s;
+  position: relative;
+}
+.modal-overlay.open .modal { transform: translateY(0); }
+.modal-close {
+  position: absolute; top: 16px; right: 16px;
+  width: 32px; height: 32px;
+  border-radius: 50%; background: var(--gray-100);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 1rem; color: var(--gray-600);
+  border: none;
+}
+.modal-close:hover { background: var(--gray-200); }
+.modal-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem; font-weight: 700;
+  color: var(--gray-900); margin-bottom: 6px;
+}
+.modal-sub { font-size: 0.88rem; color: var(--gray-600); margin-bottom: 28px; }
+.modal-form { display: flex; flex-direction: column; gap: 18px; }
+.modal-tabs { display: flex; gap: 0; margin-bottom: 24px; border-bottom: 2px solid var(--gray-200); }
+.modal-tab {
+  flex: 1; padding: 12px; text-align: center;
+  font-weight: 600; font-size: 0.9rem; color: var(--gray-500);
+  cursor: pointer; border-bottom: 2px solid transparent;
+  margin-bottom: -2px; transition: var(--transition);
+}
+.modal-tab.active { color: var(--green-600); border-color: var(--green-500); }
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .crops-grid { grid-template-columns: repeat(2, 1fr); }
+  .hiw-grid   { grid-template-columns: repeat(2, 1fr); }
+  .features-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .hero { grid-template-columns: 1fr; padding: 40px 20px; }
+  .hero-visual { display: none; }
+  .testimonials-grid { grid-template-columns: 1fr; }
+  .hero-stats { gap: 20px; }
+  .cta-section { padding: 48px 24px; margin: 0 12px 60px; }
+}
+@media (max-width: 600px) {
+  .features-grid, .crops-grid, .hiw-grid { grid-template-columns: 1fr; }
+  .hiw-connector { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- Loader -->
+<div id="page-loader">
+  <div class="loader-logo">🌱 AgriServe</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+</div>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <a href="index.html" class="nav-logo">
+    <div class="logo-icon">🌿</div>
+    AgriServe
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="dashboard.html">Dashboard</a></li>
+    <li><a href="product.html">Products</a></li>
+    <li><a href="service.html">Services</a></li>
+    <li><a href="farm-details.html">Farm Analysis</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="btn-icon" id="theme-toggle" title="Toggle theme">🌙</button>
+    <button class="btn-icon cart-badge" id="cart-btn" title="View cart">
+      🛒<span class="badge">0</span>
+    </button>
+    <button class="btn btn-primary btn-sm" id="login-btn" onclick="openLoginModal()">Sign In</button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section style="background: linear-gradient(180deg, var(--green-100) 0%, var(--cream) 100%);">
+  <div class="hero">
+    <div class="hero-content fade-in">
+      <div class="hero-tag">🌾 Trusted by 12,000+ Farmers</div>
+      <h1 class="hero-title">
+        Your Farm. Our Expertise.
+        <span>Maximum Harvest.</span>
+      </h1>
+      <p class="hero-desc">
+        Submit your land details and let AgriServe's intelligent engine recommend the best crops, predict yields, estimate profits, and connect you with expert farming services — all in one platform.
+      </p>
+      <div class="hero-actions">
+        <a href="dashboard.html" class="btn btn-primary btn-lg">🚀 Get Started Free</a>
+        <a href="farm-details.html" class="btn btn-outline btn-lg">📊 Analyze My Land</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="n">₹2.4Cr</div><div class="l">Revenue Generated</div></div>
+        <div class="hero-stat"><div class="n">98%</div><div class="l">Accuracy Rate</div></div>
+        <div class="hero-stat"><div class="n">340+</div><div class="l">Districts Covered</div></div>
+      </div>
+    </div>
+    <div class="hero-visual fade-in" style="animation-delay:0.3s">
+      <div class="hero-img-wrap">
+        <img src="https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=800&q=80" alt="Farming"/>
+      </div>
+      <div class="hero-card card-tl">
+        <div class="card-icon">📈</div>
+        <div class="card-val">+34%</div>
+        <div class="card-lbl">Avg Yield Increase</div>
+      </div>
+      <div class="hero-card card-br">
+        <div class="card-icon">🌱</div>
+        <div class="card-val">12,841</div>
+        <div class="card-lbl">Farms Managed</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">How It Works</div>
+      <h2 class="section-title">From Land to Profit in 4 Steps</h2>
+      <p class="section-subtitle">Our intelligent platform guides you through the entire farming journey, from soil analysis to harvest earnings.</p>
+    </div>
+    <div class="hiw-grid stagger">
+      <div class="hiw-card">
+        <div class="hiw-num">STEP 01</div>
+        <div class="hiw-icon">📝</div>
+        <h3>Submit Land Details</h3>
+        <p>Enter your farm location, land size, soil type and irrigation method to begin.</p>
+        <div class="hiw-connector"></div>
+      </div>
+      <div class="hiw-card">
+        <div class="hiw-num">STEP 02</div>
+        <div class="hiw-icon">🧠</div>
+        <h3>AI Analysis</h3>
+        <p>Our engine analyzes soil data, climate patterns and market trends instantly.</p>
+        <div class="hiw-connector"></div>
+      </div>
+      <div class="hiw-card">
+        <div class="hiw-num">STEP 03</div>
+        <div class="hiw-icon">🌾</div>
+        <h3>Crop Recommendations</h3>
+        <p>Get ranked crop suggestions with yield predictions and profit estimates.</p>
+        <div class="hiw-connector"></div>
+      </div>
+      <div class="hiw-card">
+        <div class="hiw-num">STEP 04</div>
+        <div class="hiw-icon">📊</div>
+        <h3>Track & Optimize</h3>
+        <p>Monitor growth, expenses, earnings and book expert services from your dashboard.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="section" style="background: var(--gray-100);">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">Platform Features</div>
+      <h2 class="section-title">Everything Your Farm Needs</h2>
+    </div>
+    <div class="features-grid stagger">
+      <div class="feature-card" onclick="window.location.href='farm-details.html'">
+        <div class="feature-icon green">🧬</div>
+        <h3>Smart Land Analysis</h3>
+        <p>Our AI engine evaluates soil type, location and size to generate precise crop and yield predictions tailored to your land.</p>
+        <span class="feature-link">Analyze Now →</span>
+      </div>
+      <div class="feature-card" onclick="window.location.href='dashboard.html'">
+        <div class="feature-icon gold">💰</div>
+        <h3>Profit Calculator</h3>
+        <p>See expected revenue, operational costs, and net profit before you plant — with market-price integration.</p>
+        <span class="feature-link">Calculate Profit →</span>
+      </div>
+      <div class="feature-card" onclick="window.location.href='service.html'">
+        <div class="feature-icon blue">🌦️</div>
+        <h3>Climate Monitoring</h3>
+        <p>Real-time temperature, humidity and rainfall data with 7-day forecasts to help plan irrigation and harvest timing.</p>
+        <span class="feature-link">View Climate →</span>
+      </div>
+      <div class="feature-card" onclick="window.location.href='service.html'">
+        <div class="feature-icon purple">🚜</div>
+        <h3>Expert Services</h3>
+        <p>Book certified agronomists, soil testers, drone surveyors and harvesting teams directly through the platform.</p>
+        <span class="feature-link">Book Service →</span>
+      </div>
+      <div class="feature-card" onclick="window.location.href='dashboard.html'">
+        <div class="feature-icon teal">📊</div>
+        <h3>Growth Dashboard</h3>
+        <p>Interactive charts showing monthly earnings, crop growth progress, and historical yield comparisons.</p>
+        <span class="feature-link">Open Dashboard →</span>
+      </div>
+      <div class="feature-card" onclick="window.location.href='product.html'">
+        <div class="feature-icon red">🛒</div>
+        <h3>Agri Marketplace</h3>
+        <p>Purchase seeds, fertilizers, tools and protective equipment from verified suppliers at wholesale prices.</p>
+        <span class="feature-link">Shop Now →</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Top Crops -->
+<section class="section">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">High-Value Crops</div>
+      <h2 class="section-title">Top Recommended Crops This Season</h2>
+    </div>
+    <div class="crops-grid stagger" id="crops-showcase">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- Success Stories -->
+<section class="section" style="background: var(--gray-100);">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-tag">Success Stories</div>
+      <h2 class="section-title">Farmers Who Transformed Their Yields</h2>
+    </div>
+    <div class="testimonials-grid stagger">
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"AgriServe recommended switching from rice to soybean on my loamy field. This season I earned 42% more than last year. The profit calculator was spot on!"</p>
+        <div class="testimonial-author">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&q=80" class="author-avatar" alt="Farmer"/>
+          <div>
+            <div class="author-name">Rajan Kumar</div>
+            <div class="author-farm">4.2 acres · Nashik, Maharashtra</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-text">"The climate monitoring feature alone saved me ₹80,000 by preventing irrigation during predicted rain. The dashboard is incredibly easy to use."</p>
+        <div class="testimonial-author">
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80" class="author-avatar" alt="Farmer"/>
+          <div>
+            <div class="author-name">Priya Devi</div>
+            <div class="author-farm">6.8 acres · Coimbatore, Tamil Nadu</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★☆</div>
+        <p class="testimonial-text">"Booked the soil testing service through the app and the agronomist arrived within 3 days. My black soil is now producing cotton at record quantities."</p>
+        <div class="testimonial-author">
+          <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&q=80" class="author-avatar" alt="Farmer"/>
+          <div>
+            <div class="author-name">Suresh Patel</div>
+            <div class="author-farm">12 acres · Vidarbha, Maharashtra</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section reveal">
+  <h2>Ready to Maximize Your Farm's Potential?</h2>
+  <p>Join 12,000+ farmers already using AgriServe to grow smarter, earn more, and farm sustainably.</p>
+  <div class="cta-actions">
+    <a href="dashboard.html" class="btn-white">🌱 Start Free Today</a>
+    <a href="service.html" class="btn-outline-white">📞 Talk to an Expert</a>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="nav-logo">
+          <div class="logo-icon">🌿</div> AgriServe
+        </div>
+        <p>India's leading AgriTech SaaS platform helping farmers maximize yield, reduce costs and grow sustainably through smart technology.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Platform</h4>
+        <ul>
+          <li><a href="dashboard.html">Dashboard</a></li>
+          <li><a href="farm-details.html">Land Analysis</a></li>
+          <li><a href="product.html">Marketplace</a></li>
+          <li><a href="service.html">Services</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press Kit</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Contact Us</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 AgriServe Technologies Pvt. Ltd. All rights reserved.</span>
+      <span>Made with 💚 for Indian Farmers</span>
+    </div>
+  </div>
+</footer>
+
+<!-- WhatsApp -->
+<a href="https://wa.me/919876543210?text=Hi AgriServe! I need farming assistance." class="whatsapp-float" target="_blank" title="Chat on WhatsApp">💬</a>
+
+<!-- Login Modal -->
+<div class="modal-overlay" id="login-modal" onclick="handleModalClick(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeLoginModal()">✕</button>
+    <div class="modal-tabs">
+      <div class="modal-tab active" onclick="switchTab('login')">Sign In</div>
+      <div class="modal-tab" onclick="switchTab('register')">Register</div>
+    </div>
+
+    <div id="tab-login">
+      <p class="modal-sub">Welcome back! Sign in to manage your farms.</p>
+      <div class="modal-form">
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-input" id="login-email" placeholder="arjun@email.com" value="arjun@agriServe.in"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" id="login-pass" placeholder="••••••••" value="password123"/>
+        </div>
+        <button class="btn btn-primary" style="width:100%" onclick="handleLogin()">Sign In →</button>
+        <p style="text-align:center;font-size:0.82rem;color:var(--gray-500)">Demo: use any email + password</p>
+      </div>
+    </div>
+
+    <div id="tab-register" style="display:none">
+      <p class="modal-sub">Create your free account and start optimizing your farm today.</p>
+      <div class="modal-form">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-input" id="reg-name" placeholder="Arjun Menon"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <input type="tel" class="form-input" id="reg-phone" placeholder="+91 98765 43210"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="form-input" id="reg-email" placeholder="you@email.com"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" id="reg-pass" placeholder="Min 8 characters"/>
+        </div>
+        <button class="btn btn-primary" style="width:100%" onclick="handleRegister()">Create Account →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+<script src="script.js"></script>
+<script>
+// ---- Crops Showcase ----
+const showcaseCrops = [
+  { name: 'Soybean', yield: '4.2t/acre', profit: '₹1.8L/acre', img: 'https://images.unsplash.com/photo-1535585209827-a15fcdbc4c2d?w=400&q=80', id: 'soybean' },
+  { name: 'Cotton', yield: '3.8t/acre', profit: '₹2.4L/acre', img: 'https://images.unsplash.com/photo-1605000797499-95a51c5269ae?w=400&q=80', id: 'cotton' },
+  { name: 'Tomato', yield: '18t/acre', profit: '₹1.2L/acre', img: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=400&q=80', id: 'tomato' },
+  { name: 'Wheat', yield: '5.1t/acre', profit: '₹95k/acre', img: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=400&q=80', id: 'wheat' },
+];
+
+const grid = document.getElementById('crops-showcase');
+if (grid) {
+  showcaseCrops.forEach(c => {
+    grid.innerHTML += `
+      <div class="crop-card" onclick="window.location.href='product.html?crop=${c.id}'">
+        <img src="${c.img}" alt="${c.name}" loading="lazy"/>
+        <div class="crop-overlay">
+          <div class="crop-name">${c.name}</div>
+          <div class="crop-yield">Avg Yield: ${c.yield}</div>
+          <div class="crop-profit">${c.profit} net profit</div>
+          <div class="crop-btn">View Details →</div>
+        </div>
+      </div>`;
+  });
+}
+
+// ---- Modal ----
+function openLoginModal() { document.getElementById('login-modal').classList.add('open'); }
+function closeLoginModal() { document.getElementById('login-modal').classList.remove('open'); }
+function handleModalClick(e) { if (e.target === e.currentTarget) closeLoginModal(); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLoginModal(); });
+
+function switchTab(tab) {
+  document.querySelectorAll('.modal-tab').forEach((t, i) => {
+    t.classList.toggle('active', (i === 0 && tab === 'login') || (i === 1 && tab === 'register'));
+  });
+  document.getElementById('tab-login').style.display = tab === 'login' ? 'block' : 'none';
+  document.getElementById('tab-register').style.display = tab === 'register' ? 'block' : 'none';
+}
+
+function handleLogin() {
+  const email = document.getElementById('login-email').value;
+  const pass  = document.getElementById('login-pass').value;
+  if (!email || !pass) { Toast.show('Please fill in all fields', 'warning'); return; }
+  Auth.login({ name: 'Arjun Menon', email, phone: '+91 98765 43210', plan: 'Pro' });
+  Toast.show('Welcome back, Arjun! 🌾');
+  closeLoginModal();
+  setTimeout(() => window.location.href = 'dashboard.html', 1200);
+}
+
+function handleRegister() {
+  const name  = document.getElementById('reg-name').value;
+  const email = document.getElementById('reg-email').value;
+  const phone = document.getElementById('reg-phone').value;
+  const pass  = document.getElementById('reg-pass').value;
+  if (!name || !email || !pass) { Toast.show('Please fill required fields', 'warning'); return; }
+  Auth.login({ name, email, phone, plan: 'Free' });
+  Toast.show(`Welcome to AgriServe, ${name}! 🌱`);
+  closeLoginModal();
+  setTimeout(() => window.location.href = 'dashboard.html', 1200);
+}
+</script>
+</body>
+</html>
